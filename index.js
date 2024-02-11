@@ -11,8 +11,10 @@ app.use(express.json());
 // mdabdullah161036;
 // vkQEzEBZIsUOTyuk
 
+// I8TUruRO5GyWdrkY;
+
 const uri =
-  "mongodb+srv://mdabdullah161036:vkQEzEBZIsUOTyuk@cluster0.fszas7w.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://mdabdullah161036:I8TUruRO5GyWdrkY@cluster0.ud8aez9.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -27,6 +29,19 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const userCollection = client.db("userDB").collection("users");
+
+    // const database = client.db("usersDB");
+    // const userCollection = database.collection("users");
+
+    app.post("/users", async (req, res) => {
+      const users = req.body;
+      const result = await userCollection.insertOne(users);
+      res.send(result);
+      console.log("get User from client", users);
+      console.log(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -34,7 +49,8 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // must comment this close function.
+    // await client.close();
   }
 }
 run().catch(console.dir);
