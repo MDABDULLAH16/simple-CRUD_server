@@ -40,6 +40,14 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    //dynamic date load for user route;
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
+
     //send data to MongoDB
     app.post("/users", async (req, res) => {
       const users = req.body;
@@ -48,8 +56,28 @@ async function run() {
       console.log("get User from client", users);
       console.log(result);
     });
-    //delete from db
 
+    //updated users
+    app.put("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const user = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedUser = {
+        $set: {
+          name: user.name,
+          email: user.email,
+        },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updatedUser,
+        options
+      );
+      res.send(result);
+    });
+
+    //delete from db
     app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
